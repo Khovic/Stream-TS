@@ -21,7 +21,7 @@ def play_ts(udp_ip, udp_port, ts_file):
             with open(ts_file, "rb") as file:
                 while True:
                     # Read a chunk of the file
-                    data = file.read(2048)  # Adjust the chunk size as needed
+                    data = file.read(4096)  # Adjust the chunk size as needed
 
                     if not data:
                         break  # If end of file, break and restart the loop
@@ -29,8 +29,8 @@ def play_ts(udp_ip, udp_port, ts_file):
                     # Send the data to the specified UDP address and port
                     sock.sendto(data, (udp_ip, udp_port))
                     
-                    # Optionally, add a slight delay to avoid overwhelming the network
-                    time.sleep(1)  # Adjust delay as needed (remove the comment to enable)
+                    # add a slight delay to avoid overwhelming the network
+                    time.sleep(0.01)  # Adjust delay as needed
 
     except KeyboardInterrupt:
         print("Streaming stopped by user")
