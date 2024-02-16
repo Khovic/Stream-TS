@@ -1,0 +1,86 @@
+document.getElementById('uploadForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    // Show loading indicator
+    document.getElementById('loadingIndicator').style.display = 'block';
+    document.getElementById('loadSpinner').style.display = 'block';
+    document.getElementById('submitBtn').style.display = 'block';
+    // Disable Submit button 
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+
+    // Validate inputs
+    if (!isValidIPAddress(document.getElementById('dst_ip').value) ||
+        !isValidPort(document.getElementById('dst_port').value)) {
+        alert('Please enter a valid IP addresses and a port number.');
+        submitBtn.disabled = false; // Re-enable the submit button if validation fails
+        return;
+    }
+
+    const formData = new FormData(this);
+
+    fetch('http://localhost:5000/upload', {
+        method: 'POST',
+        body: formData
+    })
+    
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        document.getElementById('loadSpinner').style.display = 'none';
+        document.getElementById('loadingIndicator').style.display = 'none';
+
+        // Create and append a new start_stream button
+        const stream_start = document.createElement('a');
+        stream_start.id = 'start_streamButton'; // Assign a unique ID
+        stream_start.href = 'http://localhost:5000/start_stream';
+        stream_start.innerText = 'start_stream Modified File';
+        stream_start.setAttribute('style', `
+        background-color: #0099ff; /* Light blue color */
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        display: inline-block;
+        text-decoration: none;
+        box-sizing: border-box;
+        text-align: center; /* Ensure text is centered if the button becomes multi-line */
+        font-family: Arial, sans-serif;
+    `);
+        // Re-enable the submit button
+        submitBtn.disabled = false;
+        document.body.appendChild(stream_start);
+    
+        // Add hover effect similar to the Submit button
+        stream_start.onmouseover = function() { this.style.opacity = 0.8; };
+        stream_start.onmouseout = function() { this.style.opacity = 1; };
+    
+        document.body.appendChild(stream_start);
+        submitBtn.disabled = false; // Re-enable the submit button after the upload is complete
+    })
+    
+    .catch(error => {
+        console.error('Error:', error);
+        // Hide loading indicator
+        document.getElementById('loadSpinner').style.display = 'none';
+        document.getElementById('loadingIndicator').style.display = 'none';
+        submitBtn.disabled = false; // Re-enable the submit button if upload fails
+    });
+});
+
+function isValidIPAddress(ip) {
+    if (ip === '') return true; // Allow empty input
+    const regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    console.log(ip + ' IP valid: ' + regex.test(ip))
+    return regex.test(ip);
+}
+
+function isValidPort(port) {
+    if (port === '') return true; // Allow empty input
+    if (port >= 1 && port <= 65535) {
+        console.log(' Port ' + port + ' is valid ' )
+    }
+    return port >= 1 && port <= 65535;
+}

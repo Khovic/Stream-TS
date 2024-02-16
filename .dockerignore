@@ -1,0 +1,4 @@
+stream-ts-app
+videos/*
+*.pcap*
+*.git*

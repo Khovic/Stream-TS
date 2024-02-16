@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Play TS App</title>
+    <style>
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        input[type="text"], input[type="number"], input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 22px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 16px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        #loadingIndicator {
+            position: absolute; /* or absolute */
+            top: 66%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgb(44, 201, 49);
+            padding: 16px;
+            border-radius: 5px;
+            font-size: 16px;
+            display: none; /* Hide by default */
+        }
+
+        .loader {
+            border: 16px solid #ffffff; /* Light grey */
+            border-top: 16px solid #0099ff; /* Blue */
+            border-radius: 50%;
+            width: 90px;
+            height: 90px;
+            top: 72%;
+            left: 46%;
+            transform: translate(-40%, -45%);
+            position: fixed; /* or absolute */
+            animation: spin 2s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <form id="uploadForm">
+        <div class="form-group">
+            <input type="file" name="file" required>
+        </div>
+        <div class="form-group">
+            <input type="text" id="dst_ip" name="dst_ip" placeholder="DST IP">
+        </div>
+        <div class="form-group">
+            <input type="number" id="dst_port" name="dst_port" placeholder="DST Port (1-65535)" min="1" max="65535">
+        </div>
+        <button type="submit" id="submitBtn">Submit</button>
+    </form>
+
+    <div id="loadingIndicator" style="display: none;">Uploading...</div>
+    <div id="loadSpinner" class="loader"></div>
+    <script src="play-ts-app.js"></script> <!-- Link to external JavaScript file -->
+</body>
+</html>
