@@ -53,10 +53,7 @@ def upload_file():
     if request.method == 'POST':
         # Receive file and data from the request
         file = request.files['file']
-        dst_ip = request.form['dst_ip']
-        dst_port = int(request.form['dst_port'])
         file.save(os.path.join('videos', file.filename))
-        print(f'dst_ip: {dst_ip} \n dst_port: {dst_port}')
         return jsonify({f"message": "File uploaded successfully"})
 
 
