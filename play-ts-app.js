@@ -70,23 +70,12 @@ document.getElementById('playForm').addEventListener('submit', function(event) {
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    fetch('http://localhost:5000/videos')
-        .then(response => response.json())
-        .then(videos => {
-            const listElement = document.getElementById('video-list');
-            videos.forEach(video => {
-                const listItem = document.createElement('li');
-                listItem.textContent = video;
-                listItem.className = 'video-item'; // Add a class for styling if needed
-                listItem.onclick = function() { 
-                    window.fileId = video; // Set fileId variable to the clicked file name
-                    console.log('Selected file:', window.fileId); // Optional: for debugging
-                    document.getElementById('playBtn').style.display = 'block';
-                };
-                listElement.appendChild(listItem);
-            });
-        })
-        .catch(error => console.error('Error fetching video list:', error));
+    fetchAndDisplayVideos();
+
+    const refreshButton = document.getElementById('refreshButton');
+    refreshButton.addEventListener('click', function() {
+        fetchAndDisplayVideos();
+    });
 
         const stopBtn = document.getElementById('stopBtn')
         stopBtn.addEventListener('click', function() {
@@ -174,4 +163,25 @@ function isValidPort(port) {
         console.log(' Port ' + port + ' is valid ' )
     }
     return port >= 1 && port <= 65535;
+}
+
+function fetchAndDisplayVideos() {
+    const listElement = document.getElementById('video-list');
+    listElement.innerHTML = ''; // Clear existing list
+    fetch('http://localhost:5000/videos')
+        .then(response => response.json())
+        .then(videos => {
+            videos.forEach(video => {
+                const listItem = document.createElement('li');
+                listItem.textContent = video;
+                listItem.addEventListener('click', function() {
+                    window.fileId = video; // Set the global fileId to the clicked video's name
+                    console.log("Selected video:", window.fileId); // For debugging
+                    // Add any additional actions you want to take when a video is clicked
+                    document.getElementById('playBtn').style.display = 'block'
+                });
+                listElement.appendChild(listItem);
+            });
+        })
+        .catch(error => console.error('Error fetching video list:', error));
 }

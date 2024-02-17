@@ -64,7 +64,10 @@ def play_file():
     dst_port = int(data['dst_port'])
     file_id = data.get('fileId')  # Assuming you're identifying the file in some way
 
+    # Stop any running streams before streaming
     global streaming 
+    streaming = False
+    time.sleep(1)
     streaming = data.get('streaming') # True to activate streaming thread, False to sto
 
     # Assuming the file path needs to be determined by file_id
@@ -83,7 +86,7 @@ def play_file():
 @app.route('/videos', methods=['GET'])
 def list_videos():
     video_directory = 'videos'
-    videos = os.listdir(video_directory)
+    videos = [file for file in os.listdir(video_directory) if file.endswith('.ts')]
     return jsonify(videos)
 
 if __name__ == '__main__':
