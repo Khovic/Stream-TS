@@ -55,7 +55,6 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
             const dstIp = document.getElementById('dst_ip').value;
             const dstPort = document.getElementById('dst_port').value;
 
-            // Send request to backend to invoke playTS function
             fetch('http://localhost:5000/play', {
                 method: 'POST',
                 headers: {
@@ -64,16 +63,20 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
                 body: JSON.stringify({ 
                     dst_ip: dstIp, 
                     dst_port: dstPort,
-                    fileId: 'video2.ts' // Adjust as needed; ideally, this should come from the upload response
+                    fileId: 'video2.ts', // Adjust as needed,
+                    streaming: true
                 })
             })
             .then(response => response.json())
             .then(playData => {
                 console.log('Play response:', playData);
-                // Handle the response from your play endpoint
+                // Show the stop button and streaming status
+                document.getElementById('stopButton').style.display = 'block';
+                document.getElementById('streamingStatus').style.display = 'block';
             })
             .catch(error => console.error('Error playing file:', error));
         });
+
     
         // Re-enable the submit button
         submitBtn.disabled = false;
@@ -96,6 +99,33 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
         submitBtn.disabled = false; // Re-enable the submit button if upload fails
     });
 });
+
+document.getElementById('stopButton').addEventListener('click', function() {
+    const dstIp = document.getElementById('dst_ip').value;
+    const dstPort = document.getElementById('dst_port').value;
+    fetch('http://localhost:5000/play', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+            dst_ip: dstIp, 
+            dst_port: dstPort,
+            fileId: 'video2.ts', // Adjust as needed,
+            streaming: false
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Stop response:', data);
+        // Hide the stop button again
+        document.getElementById('stopButton').style.display = 'none';
+        // Optionally, hide streaming status
+        document.getElementById('streamingStatus').style.display = 'none';
+    })
+    .catch(error => console.error('Error stopping the stream:', error));
+});
+
 
 function isValidIPAddress(ip) {
     if (ip === '') return true; // Allow empty input

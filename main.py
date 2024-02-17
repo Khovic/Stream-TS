@@ -1,4 +1,4 @@
-import socket, time, os
+import socket, time, os, threading
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
@@ -11,15 +11,20 @@ CORS(app)
 # udp_port = 32000  # Target port
 # ts_file = "videos/video2.ts"  # Path to the TS file
 
+streaming = False
+
 def play_ts(udp_ip, udp_port, ts_file): 
     # Create a socket for UDP
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+    global streaming
+    print(f'{udp_ip}, {udp_port}, {ts_file}, {streaming}')
+
     try:
-        while True:  # Loop indefinitely
+        while streaming == True:  # Loop indefinitely
             # Open the TS file
             with open(ts_file, "rb") as file:
-                while True:
+                while streaming == True:  
                     # Read a chunk of the file
                     data = file.read(4096)  # Adjust the chunk size as needed
 
@@ -34,6 +39,7 @@ def play_ts(udp_ip, udp_port, ts_file):
 
     except KeyboardInterrupt:
         print("Streaming stopped by user")
+        
 
     finally:
         # Close the socket
@@ -61,10 +67,18 @@ def play_file():
     dst_port = int(data['dst_port'])
     file_id = data.get('fileId')  # Assuming you're identifying the file in some way
 
+    global streaming 
+    streaming = data.get('streaming') # True to activate streaming thread, False to stop
+    print(f'{streaming}')
+
     # Assuming the file path needs to be determined by file_id
     ts_file_path = f'videos/{file_id}'
-
-    play_ts(dst_ip, dst_port, ts_file_path)
+    t1= threading.Thread(target=play_ts, args=[dst_ip, dst_port, ts_file_path])
+    if streaming:
+        t1.start()
+    if not streaming:
+        print(f'{streaming}')
+        streaming = False
 
     return jsonify({"message": "File is being played"}), 200
 
