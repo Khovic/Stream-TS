@@ -8,15 +8,6 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
     // Disable Submit btn 
     const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = true;
-
-    // // Validate inputs
-    // if (!isValidIPAddress(document.getElementById('dst_ip').value) ||
-    //     !isValidPort(document.getElementById('dst_port').value)) {
-    //     alert('Please enter a valid IP addresses and a port number.');
-    //     submitBtn.disabled = false; // Re-enable the submit btn if validation fails
-    //     return;
-    // }
-    
     const formData = new FormData(this);
 
     fetch('http://localhost:5000/upload', {
@@ -173,16 +164,23 @@ function fetchAndDisplayVideos() {
         .then(response => response.json())
         .then(videos => {
             videos.forEach(video => {
-                const listItem = document.createElement('li');
-                listItem.textContent = video;
-                listItem.addEventListener('click', function() {
+                const videoButton = document.createElement('button');
+                videoButton.textContent = video;
+                videoButton.className = 'video-button'; // Add class for styling
+                videoButton.addEventListener('click', function() {
+                    // Remove 'selected' class from all buttons
+                    document.querySelectorAll('.video-button').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    // Add 'selected' class to the clicked button
+                    this.classList.add('selected');
                     window.fileId = video; // Set the global fileId to the clicked video's name
-                    console.log("Selected video:", window.fileId); // For debugging
-                    // Add any additional actions you want to take when a video is clicked
+                    console.log("Selected video:", window.fileId);
                     document.getElementById('playBtn').style.display = 'block';
                 });
-                listElement.appendChild(listItem);
+                listElement.appendChild(videoButton);
             });
         })
+        
         .catch(error => console.error('Error fetching video list:', error));
 }

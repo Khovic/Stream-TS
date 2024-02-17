@@ -26,6 +26,27 @@
             width: 100%;
         }
 
+        .video-button {
+            background-color: #7bbbff;
+            border: none;
+            color: white;
+            padding: 20px; /* Adjust size as needed */
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            width: 100px; /* Adjust width as needed */
+            height: 100px; /* Adjust height as needed */
+            border-radius: 5px; /* Optional: for rounded corners */
+        }
+
+        .video-button.selected {
+            background-color: #007BFF; /* Darker shade of blue */
+        }
+
+
         button:hover {
             opacity: 0.8;
         }
@@ -44,7 +65,7 @@
 
         .loader {
             border: 16px solid #ffffff; /* Light grey */
-            border-top: 16px solid #0099ff; /* Blue */
+            border-top: 16px solid #0004ff; /* Blue */
             border-radius: 50%;
             width: 90px;
             height: 90px;
