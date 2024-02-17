@@ -67,6 +67,11 @@
         <div class="form-group">
             <input type="file" name="file" required>
         </div>
+        <div>
+            <h2>Available Videos</h2>
+            <ul id="video-list"></ul>
+        </div>
+
         <div class="form-group">
             <input type="text" id="dst_ip" name="dst_ip" placeholder="DST IP">
         </div>
@@ -79,6 +84,7 @@
     <div id="loadingIndicator" style="display: none;">Uploading...</div>
     <div id="loadSpinner" class="loader"></div>
     <div id="streamingStatus" style="display: none;">Streaming...</div>
+    <button id="playButton" style="display: none;">Start Streaming</button>
     <button id="stopButton" style="display: none;">Stop Streaming</button>
 
     <script src="play-ts-app.js"></script> <!-- Link to external JavaScript file -->

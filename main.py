@@ -57,7 +57,7 @@ def upload_file():
         dst_port = int(request.form['dst_port'])
         file.save(os.path.join('videos', file.filename))
         print(f'dst_ip: {dst_ip} \n dst_port: {dst_port}')
-        return jsonify({"message": "File processed successfully"})
+        return jsonify({f"message": "File uploaded successfully"})
 
 
 @app.route('/play', methods=['POST'])
@@ -68,20 +68,26 @@ def play_file():
     file_id = data.get('fileId')  # Assuming you're identifying the file in some way
 
     global streaming 
-    streaming = data.get('streaming') # True to activate streaming thread, False to stop
-    print(f'{streaming}')
+    streaming = data.get('streaming') # True to activate streaming thread, False to sto
 
     # Assuming the file path needs to be determined by file_id
     ts_file_path = f'videos/{file_id}'
     t1= threading.Thread(target=play_ts, args=[dst_ip, dst_port, ts_file_path])
     if streaming:
         t1.start()
+        return jsonify({"message": "Stream Started"}), 200
+
     if not streaming:
-        print(f'{streaming}')
         streaming = False
+        return jsonify({"message": "Stream Stopped"}), 200
+    else:
+        return jsonify({"message": "bool empty?"}), 200
 
-    return jsonify({"message": "File is being played"}), 200
-
+@app.route('/videos', methods=['GET'])
+def list_videos():
+    video_directory = 'videos'
+    videos = os.listdir(video_directory)
+    return jsonify(videos)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

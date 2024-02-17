@@ -16,38 +16,21 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
         submitBtn.disabled = false; // Re-enable the submit button if validation fails
         return;
     }
-
+    
     const formData = new FormData(this);
 
     fetch('http://localhost:5000/upload', {
         method: 'POST',
         body: formData
     })
-    
     .then(response => response.json())
     .then(data => {
         console.log(data);
         document.getElementById('loadSpinner').style.display = 'none';
         document.getElementById('loadingIndicator').style.display = 'none';
     
-        // Create and append a new play button
-        const playButton = document.createElement('button'); // Changed from <a> to <button>
-        playButton.id = 'playButton'; // Assign a unique ID
-        playButton.innerText = 'Play Modified File';
-        playButton.setAttribute('style', `
-        background-color: #0099ff; /* Light blue color */
-        color: white;
-        padding: 14px 20px;
-        margin: 8px 0;
-        border: none;
-        cursor: pointer;
-        width: 100%;
-        display: inline-block;
-        text-decoration: none;
-        box-sizing: border-box;
-        text-align: center; /* Ensure text is centered if the button becomes multi-line */
-        font-family: Arial, sans-serif;
-        `);
+        // Show play button
+        document.getElementById('playButton').style.display = 'block';
         
         
         // Add event listener for the play button
@@ -71,22 +54,18 @@ document.getElementById('uploadForm').addEventListener('submit', function(event)
             .then(playData => {
                 console.log('Play response:', playData);
                 // Show the stop button and streaming status
+                document.getElementById('playButton').style.display = 'none'
                 document.getElementById('stopButton').style.display = 'block';
                 document.getElementById('streamingStatus').style.display = 'block';
             })
             .catch(error => console.error('Error playing file:', error));
         });
 
-    
-        // Re-enable the submit button
-        submitBtn.disabled = false;
-        document.body.appendChild(playButton);
-    
         // Add hover effect similar to the Submit button
         playButton.onmouseover = function() { this.style.opacity = 0.8; };
         playButton.onmouseout = function() { this.style.opacity = 1; };
     
-        document.body.appendChild(playButton);
+        // document.body.appendChild(playButton);
         submitBtn.disabled = false; // Re-enable the submit button after the upload is complete
     })
     
@@ -122,8 +101,24 @@ document.getElementById('stopButton').addEventListener('click', function() {
         document.getElementById('stopButton').style.display = 'none';
         // Optionally, hide streaming status
         document.getElementById('streamingStatus').style.display = 'none';
+        // Show play button
+        document.getElementById('playButton').style.display = 'block';
     })
     .catch(error => console.error('Error stopping the stream:', error));
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('http://localhost:5000/videos')
+        .then(response => response.json())
+        .then(videos => {
+            const listElement = document.getElementById('video-list');
+            videos.forEach(video => {
+                const listItem = document.createElement('li');
+                listItem.textContent = video;
+                listElement.appendChild(listItem);
+            });
+        })
+        .catch(error => console.error('Error fetching video list:', error));
 });
 
 
