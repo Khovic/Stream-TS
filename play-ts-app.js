@@ -140,6 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Hide the play btn again
                 document.getElementById('playBtn').style.display = 'none';
                 document.getElementById('stopBtn').style.display = 'block';
+                document.getElementById('streamingStatus').style.display = 'block';
             })
             .catch(error => console.error('Error stopping the stream:', error));
     
@@ -178,7 +179,7 @@ function fetchAndDisplayVideos() {
                     window.fileId = video; // Set the global fileId to the clicked video's name
                     console.log("Selected video:", window.fileId); // For debugging
                     // Add any additional actions you want to take when a video is clicked
-                    document.getElementById('playBtn').style.display = 'block'
+                    document.getElementById('playBtn').style.display = 'block';
                 });
                 listElement.appendChild(listItem);
             });
