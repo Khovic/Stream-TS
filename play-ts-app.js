@@ -36,7 +36,6 @@ function initializeApp() {
             document.getElementById('loadSpinner').style.display = 'none';
             document.getElementById('loadingIndicator').style.display = 'none';
         
-            // document.body.appendChild(playBtn);
             submitBtn.disabled = false; // Re-enable the submit btn after the upload is complete
         })
         
@@ -48,43 +47,41 @@ function initializeApp() {
             document.getElementById('loadingIndicator').style.display = 'none';
             submitBtn.disabled = false; // Re-enable the submit btn if upload fails
         });
-
-        
-        fetchAndDisplayVideos();
+    });
     
-        const refreshButton = document.getElementById('refreshButton');
+    const refreshButton = document.getElementById('refreshButton');
         refreshButton.addEventListener('click', function() {
             fetchAndDisplayVideos();
         });
     
-            const stopBtn = document.getElementById('stopBtn')
-            stopBtn.addEventListener('click', function() {
-                const dstIp = document.getElementById('dst_ip').value;
-                const dstPort = document.getElementById('dst_port').value;
-                fetch(`${backendUrl}/play`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ 
-                        dst_ip: dstIp, 
-                        dst_port: dstPort,
-                        fileId: fileId, // Adjust as needed,
-                        streaming: false
-                    })
+        const stopBtn = document.getElementById('stopBtn')
+        stopBtn.addEventListener('click', function() {
+            const dstIp = document.getElementById('dst_ip').value;
+            const dstPort = document.getElementById('dst_port').value;
+            fetch(`${backendUrl}/play`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    dst_ip: dstIp, 
+                    dst_port: dstPort,
+                    fileId: fileId, // Adjust as needed,
+                    streaming: false
                 })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Stop response:', data);
-                    // Hide the stop btn again
-                    document.getElementById('stopBtn').style.display = 'none';
-                    // Optionally, hide streaming status
-                    document.getElementById('streamingStatus').style.display = 'none';
-                    // Show play btn
-                    document.getElementById('playBtn').style.display = 'block';
-                })
-                .catch(error => console.error('Error stopping the stream:', error));
-            });
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Stop response:', data);
+                // Hide the stop btn again
+                document.getElementById('stopBtn').style.display = 'none';
+                // Optionally, hide streaming status
+                document.getElementById('streamingStatus').style.display = 'none';
+                // Show play btn
+                document.getElementById('playBtn').style.display = 'block';
+            })
+            .catch(error => console.error('Error stopping the stream:', error));
+        });
             
         const playBtn = document.getElementById('playBtn');
         playBtn.addEventListener('click', function() {
@@ -129,8 +126,6 @@ function initializeApp() {
             playBtn.onmouseout = function() { this.style.opacity = 1; };
         
             });
-    });
-    
     
     function isValidIPAddress(ip) {
         if (ip === '') return true; // Allow empty input
