@@ -8,14 +8,16 @@ FROM nginx-python3:0.0.1
 
 # Copy the application files to the container
 COPY index.html /usr/share/nginx/html
-COPY rewrite_pcaps.js /usr/share/nginx/html
+COPY play-ts-app.js /usr/share/nginx/html
+COPY config.json /usr/share/nginx/html
 
 # Install python dependencies
-RUN mkdir -p /rewrite-be
-COPY main.py requirements.txt start.sh /rewrite-be/
+RUN mkdir -p /app
+COPY main.py requirements.txt start.sh /app/
 RUN rm /usr/lib/python3.11/EXTERNALLY-MANAGED
-WORKDIR /rewrite-be
+WORKDIR /app
 RUN pip3 install -r requirements.txt
+RUN mkdir -p videos
 
 # (Optional) Copy a custom Nginx config
 # COPY nginx.conf /etc/nginx/nginx.conf

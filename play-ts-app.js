@@ -143,11 +143,12 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    fetch('./config.json',
+    fetch('http://raw.githubusercontent.com/Khovic/Stream-TS/test-dynamic-config.json/config.json',
     {
         mode: 'cors',
         headers: {
-          'Access-Control-Allow-Origin':'*'
+          'Access-Control-Allow-Origin':'*',
+          'credentials': ''
         }
     }
     )
