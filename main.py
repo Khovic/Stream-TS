@@ -5,12 +5,6 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-
-# # Configuration
-# udp_ip = "127.0.0.1"  # Target IP address
-# udp_port = 32000  # Target port
-# ts_file = "videos/video2.ts"  # Path to the TS file
-
 streaming = False
 
 def play_ts(udp_ip, udp_port, ts_file): 

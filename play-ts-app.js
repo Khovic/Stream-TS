@@ -142,6 +142,28 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('./config.json',
+    {
+        mode: 'cors',
+        headers: {
+          'Access-Control-Allow-Origin':'*'
+        }
+    }
+    )
+        .then(response => response.json())
+        .then(config => {
+            // Now you have access to your configuration
+            console.log('Config loaded:', config);
+            // Example: Use the backend IP and port
+            const backendUrl = `http://${config.backend_ip}:${config.dst_port}`;
+            console.log('Backend URL:', backendUrl);
+            // You can now use backendUrl for your fetch requests or any other purpose
+        })
+        .catch(error => console.log('Error loading config:', error));
+});
+
+
 function isValidIPAddress(ip) {
     if (ip === '') return true; // Allow empty input
     const regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
