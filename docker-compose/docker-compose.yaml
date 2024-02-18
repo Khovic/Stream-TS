@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  play-ts-app:
+    image: play-ts-app:0.0.1
+    ports:
+      - "80:80"
+      - "5000:5000"
+    volumes:
+      - ./config.json:/usr/share/nginx/html/config.json
+      - ./videos:/app/videos

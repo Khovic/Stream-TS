@@ -10,6 +10,7 @@ FROM nginx-python3:0.0.1
 COPY index.html /usr/share/nginx/html
 COPY play-ts-app.js /usr/share/nginx/html
 COPY config/config.json /usr/share/nginx/html
+COPY favicon.ico /usr/share/nginx/html
 
 # Install python dependencies
 RUN mkdir -p /app
