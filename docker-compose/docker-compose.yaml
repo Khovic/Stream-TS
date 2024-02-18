@@ -1,6 +1,6 @@
 version: '3'
 services:
-  play-ts-app-1:
+  play-ts-app:
     image: play-ts-app:0.0.1
     ports:
       - "80:80"
