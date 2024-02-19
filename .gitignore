@@ -1,4 +1,4 @@
 stream-ts-app/*
 *.pcap*
-videos/*
+videos
 docker-compose/videos/*
