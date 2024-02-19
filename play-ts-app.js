@@ -1,5 +1,5 @@
 let backendUrl = 'http://localhost:5000'
-let fileId
+window.fileId = 'null';
 
 document.addEventListener('DOMContentLoaded', function() {
     fetch('config.json')
@@ -194,12 +194,12 @@ function initializeApp() {
         window.streamingActive = data.streamingActive
             console.log(data); // Process the response data
             if (streamingActive) {
-            console.log("Streaming is currently active.");
+            // console.log("Streaming is currently active.");
             document.getElementById('streamingStatus').style.display = 'block';
             document.getElementById('stopBtn').style.display = 'block';
             document.getElementById('playBtn').style.display = 'none';
             } else {
-            console.log("Streaming is not active.");
+            // console.log("Streaming is not active.");
             document.getElementById('streamingStatus').style.display = 'none';
             document.getElementById('stopBtn').style.display = 'none';
             if (window.fileId.endsWith('.ts'))
