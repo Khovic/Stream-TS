@@ -176,7 +176,7 @@ function initializeApp() {
                         this.classList.add('selected');
                         window.fileId = video; // Set the global fileId to the clicked video's name
                         console.log("Selected video:", window.fileId);
-                        document.getElementById('playBtn').style.display = 'block';
+                        if (!window.streamingActive){document.getElementById('playBtn').style.display = 'block';}
                     });
                     listElement.appendChild(videoButton);
                 });
