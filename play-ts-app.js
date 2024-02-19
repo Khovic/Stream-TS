@@ -6,8 +6,6 @@ document.addEventListener("DOMContentLoaded", function () {
     .then((response) => response.json())
     .then((config) => {
       backendUrl = `http://${config.backend_ip}:${config.backend_port}`; // Update the global backendUrl
-      window.channel_1_ip = config.dst_ip
-      window.channel_1_port = config.dst_port
       console.log("Config loaded:", config);
       console.log("Backend URL:", backendUrl);
       initializeApp(); // Initialize your app after loading the config
