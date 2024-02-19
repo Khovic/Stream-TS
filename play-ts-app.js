@@ -1,4 +1,5 @@
 let backendUrl = 'http://localhost:5000'
+let fileId
 
 document.addEventListener('DOMContentLoaded', function() {
     fetch('config.json')
@@ -58,17 +59,30 @@ function initializeApp() {
         stopBtn.addEventListener('click', function() {
             const dstIp = document.getElementById('dst_ip').value;
             const dstPort = document.getElementById('dst_port').value;
+            const requestBody = {
+                streaming: false // Include any non-optional fields
+              };
+              
+              // Check if each variable has a value and add it to the requestBody if so
+              if (dstIp) {
+                requestBody.dst_ip = dstIp;
+              }
+              if (dstPort) {
+                requestBody.dst_port = dstPort;
+              }
+              if (window.fileId) {
+                requestBody.fileId = window.fileId;
+              }
             fetch(`${backendUrl}/play`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    dst_ip: dstIp, 
-                    dst_port: dstPort,
-                    fileId: fileId, // Adjust as needed,
-                    streaming: false
-                })
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody)
+            })
+            .then(response => response.json())
+            .then(data => {
+            console.log('Success:', data);
             })
             .then(response => response.json())
             .then(data => {
@@ -92,7 +106,7 @@ function initializeApp() {
             
             // Validate inputs
             if (!isValidIPAddress(document.getElementById('dst_ip').value) ||
-                !isValidPort(document.getElementById('dst_port').value)) {
+                !isValidPort(document.getElementById('dst_port').value) || !window.fileId.endsWith('.ts')) {
                 alert('Please enter a valid IP addresses and a port number.');
                 playBtn.disabled = false; // Re-enable the submit btn if validation fails
                 console.log('play')
@@ -107,7 +121,7 @@ function initializeApp() {
                 body: JSON.stringify({ 
                     dst_ip: dstIp, 
                     dst_port: dstPort,
-                    fileId: fileId, // Adjust as needed,
+                    fileId: window.fileId, // Adjust as needed,
                     streaming: true
                 })
             })
@@ -116,8 +130,6 @@ function initializeApp() {
                 console.log('play response:', data);
                 // Hide the play btn again
                 document.getElementById('playBtn').style.display = 'none';
-                document.getElementById('stopBtn').style.display = 'block';
-                document.getElementById('streamingStatus').style.display = 'block';
             })
             .catch(error => console.error('Error stopping the stream:', error));
     
@@ -127,15 +139,18 @@ function initializeApp() {
         
             });
     
+    const intervalId = setInterval(checkStreamStatus, 1000); // 5000 milliseconds = 5 seconds
+
+    
     function isValidIPAddress(ip) {
-        if (ip === '') return true; // Allow empty input
+        if ((ip === '') & ( window.streamingActive === true )) return true; // Allow empty input
         const regex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
         console.log(ip + ' IP valid: ' + regex.test(ip))
         return regex.test(ip);
     }
     
     function isValidPort(port) {
-        if (port === '') return true; // Allow empty input
+        if ((port === '')  & ( window.streamingActive === true )) return true; // Allow empty input
         if (port >= 1 && port <= 65535) {
             console.log(' Port ' + port + ' is valid ' )
         }
@@ -169,5 +184,30 @@ function initializeApp() {
             
             .catch(error => console.error('Error fetching video list:', error));
     }
+
+    function checkStreamStatus() {
+        fetch(`${backendUrl}/stream_status`, {
+          method: 'GET',
+        })
+        .then(response => response.json())
+        .then(data => {
+        window.streamingActive = data.streamingActive
+            console.log(data); // Process the response data
+            if (streamingActive) {
+            console.log("Streaming is currently active.");
+            document.getElementById('streamingStatus').style.display = 'block';
+            document.getElementById('stopBtn').style.display = 'block';
+            document.getElementById('playBtn').style.display = 'none';
+            } else {
+            console.log("Streaming is not active.");
+            document.getElementById('streamingStatus').style.display = 'none';
+            document.getElementById('stopBtn').style.display = 'none';
+            if (window.fileId.endsWith('.ts'))
+            document.getElementById('playBtn').style.display = 'block';
+            }
+        })
+        .catch(error => console.error('Error fetching streaming status:', error));
+      }
+      
     
 }
