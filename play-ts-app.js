@@ -1,14 +1,18 @@
 let backendUrl = "http://localhost:5000";
 window.fileId = "null";
+window.streamingActive = false;
 
 document.addEventListener("DOMContentLoaded", function () {
-  fetch("config.json")
+  fetch("config/config.json")
     .then((response) => response.json())
     .then((config) => {
       backendUrl = `http://${config.backend_ip}:${config.backend_port}`; // Update the global backendUrl
       console.log("Config loaded:", config);
       console.log("Backend URL:", backendUrl);
+      const channelsJson = JSON.stringify(config.channels)
+      console.log(channelsJson)
       initializeApp(); // Initialize your app after loading the config
+      createChannelButtons(channelsJson)
     })
     .catch((error) => console.error("Error loading config:", error));
 });
@@ -18,7 +22,7 @@ function initializeApp() {
   stopStream();
   playStream();
   fetchAndDisplayVideos();
-  const intervalId = setInterval(checkStreamStatus, 1000); // 5000 milliseconds = 5 seconds
+  const intervalId = setInterval(checkStreamStatus, 3000); // 5000 milliseconds = 5 seconds
 }
 
 function stopStream() {
@@ -188,8 +192,9 @@ function fetchAndDisplayVideos() {
           this.classList.add("selected");
           window.fileId = video; // Set the global fileId to the clicked video's name
           console.log("Selected video:", window.fileId);
-          if (!window.streamingActive) {
+          if (!window.streamingActive & window.fileId.endsWith(".ts")) {
             document.getElementById("playBtn").style.display = "block";
+            document.getElementById("channelsContainer").style.display = "block";
           }
         });
         listElement.appendChild(videoButton);
@@ -207,18 +212,83 @@ function checkStreamStatus() {
     .then((data) => {
       window.streamingActive = data.streamingActive;
       console.log(data); // Process the response data
-      if (streamingActive) {
+      if (window.streamingActive) {
         // console.log("Streaming is currently active.");
         document.getElementById("streamingStatus").style.display = "block";
         document.getElementById("stopBtn").style.display = "block";
         document.getElementById("playBtn").style.display = "none";
+        document.getElementById("channelsContainer").style.display = "none";
       } else {
         // console.log("Streaming is not active.");
         document.getElementById("streamingStatus").style.display = "none";
         document.getElementById("stopBtn").style.display = "none";
-        if (window.fileId.endsWith(".ts"))
+        if (fileId.endsWith(".ts") == true) {
           document.getElementById("playBtn").style.display = "block";
+          document.getElementById("channelsContainer").style.display = "block";
+        }
       }
     })
     .catch((error) => console.error("Error fetching streaming status:", error));
+}
+
+function createChannelButtons(channelsJson) {
+  // Assuming channelsJson is a JSON string; parse it to an object
+  const channels = JSON.parse(channelsJson);
+  console.log(channels)
+
+  // Find the container where you want to append the buttons
+  const container = document.getElementById('channelsContainer');
+
+  // Iterate over each channel in the object
+  for (const [channelName, channelInfo] of Object.entries(channels)) {
+      // Create a new button element
+      const button = document.createElement('button');
+      button.textContent = `Stream to ${channelName}`; // Set the button's text to the channel name
+      
+      // Add an event listener to log the IP and port when the button is clicked
+      button.addEventListener('click', function() {
+          console.log(`Channel: ${channelName}, IP: ${channelInfo.ip}, Port: ${channelInfo.port}`);
+
+          if (
+            !isValidIPAddress(channelInfo.ip) ||
+            !isValidPort(channelInfo.port) ||
+            !window.fileId.endsWith(".ts")
+          ) {
+            alert("Invalid config.json or no TS file selected");
+            console.log("play");
+            return;
+          }
+
+          fetch(`${backendUrl}/play`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              dst_ip: channelInfo.ip,
+              dst_port: channelInfo.port,
+              fileId: window.fileId, // Adjust as needed,
+              streaming: true
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log("play response:", data);
+              document.getElementById("channelsContainer").style.display = "none";
+            })
+            .catch((error) => console.error("Error stopping the stream:", error));
+    
+          // Add hover effect
+          button.onmouseover = function () {
+            this.style.opacity = 0.8;
+          };
+          button.onmouseout = function () {
+            this.style.opacity = 1;
+          };
+
+      });
+
+      // Append the button to the container
+      container.appendChild(button);
+  }
 }

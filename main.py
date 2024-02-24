@@ -1,4 +1,4 @@
-import socket, time, os, threading
+import socket, time, os, threading, json
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
@@ -6,6 +6,12 @@ app = Flask(__name__)
 CORS(app)
 
 streaming_active = False
+
+def load_config(file_path):
+    with open(file_path, 'r') as file:
+        config = json.load(file)
+        channels = config['channels']
+    return config
 
 def play_ts(udp_ip, udp_port, ts_file): 
     # Create a socket for UDP
@@ -16,26 +22,31 @@ def play_ts(udp_ip, udp_port, ts_file):
 
     try:
         while streaming_active == True:  # Loop indefinitely
-            # Open the TS file
-            with open(ts_file, "rb") as file:
-                while streaming_active == True:  
-                    # Read a chunk of the file
-                    data = file.read(1472)  # Adjust the chunk size as needed
+            # Open the TS file\
+            try:
+                with open(ts_file, "rb") as file:
+                    while streaming_active == True:  
+                        # Read a chunk of the file
+                        data = file.read(1472)  # Adjust the chunk size as needed
 
-                    if not data:
-                        break  # If end of file, break and restart the loop
+                        if not data:
+                            break  # If end of file, break and restart the loop
 
-                    # Send the data to the specified UDP address and port
-                    sock.sendto(data, (udp_ip, udp_port))
-                    
-                    # add a slight delay to avoid overwhelming the network
-                    time.sleep(0.004)  # Adjust delay as needed
+                        # Send the data to the specified UDP address and port
+                        sock.sendto(data, (udp_ip, udp_port))
+                        
+                        # add a slight delay to avoid overwhelming the network
+                        time.sleep(0.004)  # Adjust delay as needed
+            except: 
+                print(f"Error Opening file {ts_file}")
+                streaming_active = False
 
     except KeyboardInterrupt:
         print("Streaming stopped by user")
         
 
     finally:
+        
         # Close the socket
         sock.close()
         print("Socket closed. Exiting.")
