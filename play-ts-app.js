@@ -21,6 +21,7 @@ function initializeApp() {
   uploadVideoFile();
   stopStream();
   playStream();
+  deleteVideoFile()
   fetchAndDisplayVideos();
   const intervalId = setInterval(checkStreamStatus, 3000); // 5000 milliseconds = 5 seconds
 }
@@ -157,6 +158,52 @@ function uploadVideoFile() {
     });
 }
 
+function deleteVideoFile() {
+  const deleteBtn = document.getElementById("deleteBtn");
+  deleteBtn.addEventListener("click", function () {
+    console.log("delete pressed");
+    deleteBtn.disabled = false
+    // Validate inputs
+    if (
+      !window.fileId.endsWith(".ts")
+    ) {
+      alert("Invalid file selected");
+      deleteBtn.disabled = false; // Re-enable the submit btn if validation fails
+      console.log("delete");
+      return;
+    }
+
+    fetch(`${backendUrl}/delete`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        fileId: window.fileId, // Adjust as needed,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("delete response:", data);
+        // Hide the delete btn again
+        document.getElementById("deleteBtn").style.display = "none";
+      })
+      .catch((error) => console.error("Error deleting the file", error));
+
+    setTimeout(function() {
+      fetchAndDisplayVideos();
+    }, (1 * 1000));
+
+    // Add hover effect
+    deleteBtn.onmouseover = function () {
+      this.style.opacity = 0.8;
+    };
+    deleteBtn.onmouseout = function () {
+      this.style.opacity = 1;
+    };
+  });
+}
+
 function isValidIPAddress(ip) {
   if ((ip === "") & (window.streamingActive === true)) return true; // Allow empty input
   const regex =
@@ -196,11 +243,14 @@ function fetchAndDisplayVideos() {
             document.getElementById("playBtn").style.display = "block";
             document.getElementById("channelsContainer").style.display = "block";
           }
+          if (!window.streamingActive & window.fileId.endsWith(".ts")) {
+            document.getElementById("deleteBtn").style.display = "block";
+          }
         });
         listElement.appendChild(videoButton);
       });
     })
-
+    
     .catch((error) => console.error("Error fetching video list:", error));
 }
 

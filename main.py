@@ -61,6 +61,18 @@ def upload_file():
         file.save(os.path.join('videos', file.filename))
         return jsonify({f"message": "File uploaded successfully"})
 
+@app.route('/delete', methods=['POST'])
+def delete_file():
+    if request.method == 'POST':
+        data = request.get_json()  # Get the JSON data sent from the frontend
+        try:
+            file_id = data.get('fileId')  # Assuming you're identifying the file in some way
+            os.remove(f"videos/{file_id}")
+            message = "File Deleted successfully"
+        except:
+            print('No fileID provided')
+            message = "File deletion failed, no fileID provided?"
+        return jsonify({f"message": f"{message}"})
 
 @app.route('/play', methods=['POST', 'PUT'])
 def play_file():
