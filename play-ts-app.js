@@ -160,6 +160,7 @@ function uploadVideoFile() {
 
 function deleteVideoFile() {
   const deleteBtn = document.getElementById("deleteBtn");
+  deleteBtn.style.background='#FF0000';
   deleteBtn.addEventListener("click", function () {
     console.log("delete pressed");
     deleteBtn.disabled = false
@@ -192,15 +193,17 @@ function deleteVideoFile() {
 
     setTimeout(function() {
       fetchAndDisplayVideos();
-    }, (1 * 1000));
+    }, (1 * 300));
 
     // Add hover effect
     deleteBtn.onmouseover = function () {
       this.style.opacity = 0.8;
+      this.style.background-color 
     };
     deleteBtn.onmouseout = function () {
       this.style.opacity = 1;
     };
+    this.style.background-color;
   });
 }
 
@@ -294,6 +297,7 @@ function createChannelButtons(channelsJson) {
       // Create a new button element
       const button = document.createElement('button');
       button.textContent = `Stream to ${channelName}`; // Set the button's text to the channel name
+      button.style.background='#00ced1';
       
       // Add an event listener to log the IP and port when the button is clicked
       button.addEventListener('click', function() {
