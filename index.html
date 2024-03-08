@@ -8,7 +8,7 @@
         }
 
         input[type="text"], input[type="number"], input[type="file"] {
-            width: 100%;
+            width: 50%;
             padding: 8px;
             margin: 5px 0 22px 0;
             display: inline-block;
@@ -20,10 +20,10 @@
             background-color: #4CAF50;
             color: white;
             padding: 16px 20px;
-            margin: 8px 0;
+            margin: 8px 0.1%;
             border: none;
             cursor: pointer;
-            width: 100%;
+            width: 50%;
         }
 
         .video-button {
@@ -33,13 +33,16 @@
             padding: 20px; /* Adjust size as needed */
             text-align: center;
             text-decoration: none;
-            display: inline-block;
             font-size: 16px;
             margin: 4px 2px;
             cursor: pointer;
-            width: 100px; /* Adjust width as needed */
-            height: 100px; /* Adjust height as needed */
+            width: 200px; /* Adjust width as needed */
+            height: 50px; /* Adjust height as needed */
             border-radius: 5px; /* Optional: for rounded corners */
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            justify-content: center;
         }
 
         .video-button.selected {
@@ -69,12 +72,23 @@
             border-radius: 50%;
             width: 90px;
             height: 90px;
-            top: 72%;
-            left: 46%;
             transform: translate(-40%, -45%);
             position: fixed; /* or absolute */
             animation: spin 2s linear infinite;
             display: none;
+        }
+
+        .flex-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .center-horizontally {
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            display: flex;
+            justify-content: center;
         }
 
         @keyframes spin {
@@ -85,37 +99,37 @@
 </head>
 <body>
     <form id="uploadForm">
-        <div class="form-group">
-            <input type="file" name="file" required>
+        <div class="center-horizontally" style="font-family: Arial"><h1>File Management</h1></div>
+        <div class="form-group" >
+            <div class="center-horizontally"><input type="file" name="file" required></div>
         </div>
-        <button type="submit" id="submitBtn">Upload</button>
+        <div class="center-horizontally"><button type="submit" id="submitBtn">Upload</button></div>
+        <div class="center-horizontally"><button id="deleteBtn" style="display: none;">Delete Video</button></div>
     </form>
     <form id="playForm"></form>
+        <div class="center-horizontally" style="font-family: Arial"><h2>Available Videos</h2></div>
+            <div class="center-horizontally"></div><ul id="video-list"></ul></div>
+            <div class="center-horizontally" style="font-family: Arial"><h1>Stream Management</h1></div>
+        <div id="channelsContainer" class="center-horizontally" style="display: none;"></div>
         <div>
-            <h2>Available Videos</h2>
-            <ul id="video-list"></ul>
-        </div>
-        <div id="channelsContainer" style="display: none;"></div>
-        <div>
-            <h2>Manual Channel Streaming</h2>
+            <div class="center-horizontally" style="font-family: Arial"><h2>Manual Channel Streaming</h2></div>
             <ul id="video-list"></ul>
             <div class="form-group">
-                <input type="text" id="dst_ip" name="dst_ip" placeholder="DST IP">
+                <div class="center-horizontally"><input type="text" id="dst_ip" name="dst_ip" placeholder="DST IP"></div>
             </div>
             <div class="form-group">
-                <input type="number" id="dst_port" name="dst_port" placeholder="DST Port (1-65535)" min="1" max="65535">
+                <div class="center-horizontally"><input type="number" id="dst_port" name="dst_port" placeholder="DST Port (1-65535)" min="1" max="65535"></div>
             </div>
         </div>
-        <button id="deleteBtn" style="display: none;">Delete Video</button>
-        <button id="playBtn" style="display: none;">Start Streaming to manual channel</button>
-        <button id="stopBtn" style="display: none;">Stop Streaming</button>
+        <div class="center-horizontally"><button id="playBtn" style="display: none;">Start Streaming to manual channel</button></div>
+        <div class="center-horizontally"><button id="stopBtn" style="display: none;">Stop Streaming</button></div>
     </form>
 
     
 
-    <div id="loadingIndicator" style="display: none;">Uploading...</div>
-    <div id="loadSpinner" class="loader"></div>
-    <div id="streamingStatus" style="display: none;">Streaming...</div>
+    <div id="loadingIndicator" class="center-horizontally" style="display: none;" style="font-family: Arial">Uploading...</div>
+    <div class="center-horizontally"><div id="loadSpinner" class="loader"></div></div>
+    <div id="streamingStatus" class="center-horizontally" style="display: none;" style="font-family: Arial">Streaming...</div>
     
 
     <script src="play-ts-app.js"></script> <!-- Link to external JavaScript file -->

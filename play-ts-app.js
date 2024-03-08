@@ -162,39 +162,43 @@ function deleteVideoFile() {
   const deleteBtn = document.getElementById("deleteBtn");
   deleteBtn.style.background='#FF0000';
   deleteBtn.addEventListener("click", function () {
-    console.log("delete pressed");
-    deleteBtn.disabled = false
-    // Validate inputs
-    if (
-      !window.fileId.endsWith(".ts")
-    ) {
-      alert("Invalid file selected");
-      deleteBtn.disabled = false; // Re-enable the submit btn if validation fails
-      console.log("delete");
-      return;
-    }
+    const isConfirmed = confirm(`Are you sure you want to delete ${window.fileId}?`);
+    if (isConfirmed) {
+      console.log("delete pressed");
+      deleteBtn.disabled = false
+      // Validate inputs
+      if (
+        !window.fileId.endsWith(".ts")
+      ) {
+        alert("Invalid file selected");
+        deleteBtn.disabled = false; // Re-enable the submit btn if validation fails
+        console.log("delete");
+        return;
+      }
 
-    fetch(`${backendUrl}/delete`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        fileId: window.fileId, // Adjust as needed,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("delete response:", data);
-        // Hide the delete btn again
-        document.getElementById("deleteBtn").style.display = "none";
+      fetch(`${backendUrl}/delete`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fileId: window.fileId, // Adjust as needed,
+        }),
       })
-      .catch((error) => console.error("Error deleting the file", error));
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("delete response:", data);
+          // Hide the delete btn again
+          document.getElementById("deleteBtn").style.display = "none";
+        })
+        .catch((error) => console.error("Error deleting the file", error));
 
-    setTimeout(function() {
-      fetchAndDisplayVideos();
-    }, (1 * 300));
-
+      setTimeout(function() {
+        fetchAndDisplayVideos();
+      }, (1 * 300));
+    } else {
+      console.log("Delete Canceled")
+    }
     // Add hover effect
     deleteBtn.onmouseover = function () {
       this.style.opacity = 0.8;
@@ -270,6 +274,7 @@ function checkStreamStatus() {
         document.getElementById("streamingStatus").style.display = "block";
         document.getElementById("stopBtn").style.display = "block";
         document.getElementById("playBtn").style.display = "none";
+        document.getElementById("deleteBtn").style.display = "none";
         document.getElementById("channelsContainer").style.display = "none";
       } else {
         // console.log("Streaming is not active.");
@@ -278,6 +283,7 @@ function checkStreamStatus() {
         if (fileId.endsWith(".ts") == true) {
           document.getElementById("playBtn").style.display = "block";
           document.getElementById("channelsContainer").style.display = "block";
+          document.getElementById("deleteBtn").style.display = "block";
         }
       }
     })
@@ -298,6 +304,7 @@ function createChannelButtons(channelsJson) {
       const button = document.createElement('button');
       button.textContent = `Stream to ${channelName}`; // Set the button's text to the channel name
       button.style.background='#00ced1';
+      button.style.width = "24.9%";
       
       // Add an event listener to log the IP and port when the button is clicked
       button.addEventListener('click', function() {
