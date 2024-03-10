@@ -22,7 +22,7 @@ def play_ts(udp_ip, udp_port, ts_file):
 
     try:
         while streaming_active == True:  # Loop indefinitely
-            # Open the TS file\
+            # Open the TS file
             try:
                 with open(ts_file, "rb") as file:
                     while streaming_active == True:  
@@ -46,7 +46,6 @@ def play_ts(udp_ip, udp_port, ts_file):
         
 
     finally:
-        
         # Close the socket
         sock.close()
         print("Socket closed. Exiting.")
@@ -66,7 +65,7 @@ def delete_file():
     if request.method == 'POST':
         data = request.get_json()  # Get the JSON data sent from the frontend
         try:
-            file_id = data.get('fileId')  # Assuming you're identifying the file in some way
+            file_id = data.get('fileId')  
             os.remove(f"videos/{file_id}")
             message = "File Deleted successfully"
         except:
@@ -88,7 +87,7 @@ def play_file():
         print('No dst_port provided')
         dst_port = False
     try:
-        file_id = data.get('fileId')  # Assuming you're identifying the file in some way
+        file_id = data.get('fileId') 
     except:
         print('No fileID provided')
         file_id = False
@@ -97,8 +96,7 @@ def play_file():
     global streaming_active 
     streaming_active = False
     time.sleep(1)
-    streaming_active = data.get('streaming') # True to activate streaming thread, False to sto
-    # Assuming the file path needs to be determined by file_id
+    streaming_active = data.get('streaming') # True to activate streaming thread, False to stop
     ts_file_path = f'videos/{file_id}'
     
     if streaming_active and file_id and dst_port and dst_ip :
