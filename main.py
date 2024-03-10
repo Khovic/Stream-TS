@@ -6,6 +6,7 @@ app = Flask(__name__)
 CORS(app)
 
 streaming_active = False
+active_channel = ''
 
 def load_config(file_path):
     with open(file_path, 'r') as file:
@@ -16,7 +17,7 @@ def load_config(file_path):
 def play_ts(udp_ip, udp_port, ts_file): 
     # Create a socket for UDP
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
+    global active_channel
     global streaming_active
     print(f'{udp_ip}, {udp_port}, {ts_file}, {streaming_active}')
 
@@ -37,9 +38,11 @@ def play_ts(udp_ip, udp_port, ts_file):
                         
                         # add a slight delay to avoid overwhelming the network
                         time.sleep(0.004)  # Adjust delay as needed
+                        active_channel = f'{udp_ip}:{udp_port}'
             except: 
                 print(f"Error Opening file {ts_file}")
                 streaming_active = False
+                active_channel = ''
 
     except KeyboardInterrupt:
         print("Streaming stopped by user")
@@ -121,9 +124,12 @@ def list_videos():
 @app.route('/stream_status', methods=['GET'])
 def get_stream_status():
     global streaming_active
+    global active_channel
     return jsonify({
         'streamingActive': streaming_active,
-        'message': 'Streaming is currently active.' if streaming_active else 'Streaming is not active.'
+        'activeChannel': active_channel,
+        'message': 'Streaming is currently active.' if streaming_active else 'Streaming is not active.',
+        'dstIP': udp_ip
     })
 
 if __name__ == '__main__':
