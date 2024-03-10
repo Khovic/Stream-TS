@@ -42,7 +42,7 @@ def play_ts(udp_ip, udp_port, ts_file):
             except: 
                 print(f"Error Opening file {ts_file}")
                 streaming_active = False
-                active_channel = ''
+            active_channel = ''
 
     except KeyboardInterrupt:
         print("Streaming stopped by user")
@@ -127,8 +127,8 @@ def get_stream_status():
     global active_channel
     return jsonify({
         'streamingActive': streaming_active,
-        'activeChannel': active_channel,
-        'message': 'Streaming is currently active.' if streaming_active else 'Streaming is not active.',
+        'activeChannel': active_channel
+
     })
 
 if __name__ == '__main__':

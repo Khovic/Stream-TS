@@ -1,4 +1,5 @@
 let backendUrl = "http://localhost:5000";
+window.preconfiguredChannels = [];
 window.fileId = "null";
 window.streamingActive = false;
 
@@ -28,6 +29,7 @@ function initializeApp() {
 
 function stopStream() {
   const stopBtn = document.getElementById("stopBtn");
+  stopBtn.style.background='#FFBF00'
   stopBtn.addEventListener("click", function () {
     const dstIp = document.getElementById("dst_ip").value;
     const dstPort = document.getElementById("dst_port").value;
@@ -46,16 +48,12 @@ function stopStream() {
       requestBody.fileId = window.fileId;
     }
     fetch(`${backendUrl}/play`, {
-      method: "PUT",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(requestBody),
     })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Success:", data);
-      })
       .then((response) => response.json())
       .then((data) => {
         console.log("Stop response:", data);
@@ -267,10 +265,17 @@ function checkStreamStatus() {
   })
     .then((response) => response.json())
     .then((data) => {
+      window.activeChannel = data.activeChannel
       window.streamingActive = data.streamingActive;
       console.log(data); // Process the response data
       if (window.streamingActive) {
-        // console.log("Streaming is currently active.");
+
+      let channelExists = preconfiguredChannels.find(item => item.value === window.activeChannel);
+      if (channelExists) {
+        document.getElementById('streamingStatus').textContent = `Currently Streaming to ${channelExists.name}`;
+      } else {
+        document.getElementById('streamingStatus').textContent = `Currently Streaming to ${window.activeChannel}`;
+      }
         document.getElementById("streamingStatus").style.display = "block";
         document.getElementById("stopBtn").style.display = "block";
         document.getElementById("playBtn").style.display = "none";
@@ -306,6 +311,9 @@ function createChannelButtons(channelsJson) {
       button.style.background='#00ced1';
       button.style.width = "24.9%";
       
+      // Add channels to list
+      window.preconfiguredChannels.push({name: `${channelName}`, value: `${channelInfo.ip}:${channelInfo.port}`})
+      console.log(`${window.preconfiguredChannels[0].name}:${window.preconfiguredChannels[0].value}`)
       // Add an event listener to log the IP and port when the button is clicked
       button.addEventListener('click', function() {
           console.log(`Channel: ${channelName}, IP: ${channelInfo.ip}, Port: ${channelInfo.port}`);
