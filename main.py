@@ -129,7 +129,6 @@ def get_stream_status():
         'streamingActive': streaming_active,
         'activeChannel': active_channel,
         'message': 'Streaming is currently active.' if streaming_active else 'Streaming is not active.',
-        'dstIP': udp_ip
     })
 
 if __name__ == '__main__':
