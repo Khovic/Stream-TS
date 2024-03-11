@@ -1,6 +1,6 @@
 import socket, time, os, threading, json
 
-# Dictionary to keep track of threads and their stop flags
+# Dictionary to keep track of threads and their active status
 threads = {}
 active_threads = {}
 
@@ -10,28 +10,25 @@ def load_config(file_path):
     return config
 
 def play_test(channel, dst_ip, dst_port, ts_file_path , active_thread):
-
     while active_thread:
         print(f'thread for {channel} ({dst_ip}:{dst_port}) is running {ts_file_path}')
         time.sleep(1)
+        if active_threads[channel] == False:
+            print('Stopping Thread')
+            break
     print(f'{channel} thread has stopped')
 
-# # Function to start a thread for a specific key:value pair
-# def start_thread(key, value):
-#     active_thread = threading.Event()  # Create a stop flag for this thread
-#     thread = threading.Thread(target=play_test, args=(key, value, active_thread), name=key)
-#     threads[key] = thread
-#     active_threads[key] = active_thread
-#     thread.start()
 
-# # Function to stop a thread by key
-# def stop_thread(key):
-#     active_thread = active_threads.get(key)
-#     if active_thread:
-#         active_thread.set()  # Set the stop flag
-#         threads[key].join()  # Wait for the thread to finish
-#         del threads[key]  # Remove the thread from the dictionary
-#         del active_threads[key]  # Remove the stop flag from the dictionary
+def start_thread(channel, dst_ip, dst_port, ts_file_path,):
+    thread_status = active_threads[f'{channel}']
+    while thread_status:
+        print(f'thread for {channel} ({dst_ip}:{dst_port}) is running {ts_file_path}')
+        time.sleep(1)
+        if thread_status == False:
+            print(f'Stopping {channel} Thread')
+            break
+    print(f'{channel} thread has stopped')
+
 
 
 
@@ -51,6 +48,12 @@ def main():
 
     time.sleep(3)
     active_threads[f'DEV'] = False
+    time.sleep(3)
+    active_threads[f'CICD'] = False
+    del threads['DEV']
+    time.sleep(3)
+    active_threads['DEV'] = True
+    threads['DEV'] = threading.Thread(target=play_test, args=['DEV', dst_ip, dst_port, ts_file_path, active_threads[f'DEV']])
+    threads['DEV'].start()
 
-    
 main()
