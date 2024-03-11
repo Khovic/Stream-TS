@@ -275,14 +275,29 @@ function checkStreamStatus() {
     .then((data) => {
       window.activeChannel = data.activeChannel
       window.streamingActive = data.streamingActive;
+      window.activeThreads = data.activeThreads
+      Object.entries(activeThreads).forEach(([key, value]) => {
+        document.getElementById(`channel${key}Btn`).disabled = false;
+        if (value) {
+          console.log(`HELLO HEY HEY ITS A MEE ${key} and I am truee`);
+          document.getElementById(`channel${key}Btn`).style.backgroundColor = '#900C3F';
+          document.getElementById(`channel${key}Btn`).textContent = `Stop Streaming to ${key}`;
+          document.getElementById(`channel${key}Btn`).style.width = "29.9%";
+        } else {
+          console.log(`HELLO HEY HEY ITS A MEE ${key} and I am Falsee`);
+          document.getElementById(`channel${key}Btn`).style.backgroundColor = '#00ced1';
+          document.getElementById(`channel${key}Btn`).textContent = `Stream to ${key}`;
+          document.getElementById(`channel${key}Btn`).style.width = "29.9%";
+        }
+      // }
+      });
       console.log(data); // Process the response data
       if (window.streamingActive) {
-
         let channelExists = preconfiguredChannels.find(item => item.value === window.activeChannel);
         if (channelExists) {
           document.getElementById('streamingStatus').textContent = `Currently Streaming to ${channelExists.name}`;
         } else {
-          document.getElementById('streamingStatus').textContent = `Currently Streaming to ${window.activeChannel}`;
+          document.getElementById('streamingStatus').textContent = `Currently Streaming to ${window.activeThreads}`;
         }
         document.getElementById("streamingStatus").style.display = "block";
         document.getElementById("stopBtn").disabled = false;
@@ -380,7 +395,7 @@ function createChannelButtons(channelsJson) {
   // Assuming channelsJson is a JSON string; parse it to an object
   const channels = JSON.parse(channelsJson);
   console.log(channels)
-
+  window.channels = channels 
   // Find the container where you want to append the buttons
   const container = document.getElementById('channelsContainer');
 
@@ -389,28 +404,21 @@ function createChannelButtons(channelsJson) {
       // Create a new button element
       const button = document.createElement('button');
       button.textContent = `Stream to ${channelName}`; // Set the button's text to the channel name
-      button.style.background='#00ced1';
+      button.style.background='gray';
       button.style.width = "29.9%";
       button.id = `channel${channelName}Btn`;
-      
+      button.disabled = true;
+
       // Add channels to list
       window.preconfiguredChannels.push({name: `${channelName}`, value: `${channelInfo.ip}:${channelInfo.port}`})
       console.log(`${window.preconfiguredChannels[0].name}:${window.preconfiguredChannels[0].value}`)
       // Add an event listener to log the IP and port when the button is clicked
       button.addEventListener('click', function() {
           console.log(`Channel: ${channelName}, IP: ${channelInfo.ip}, Port: ${channelInfo.port}`);
-
-          if (!window.streamingActive) {
+          if (!window.activeThreads[channelName]) {
             streamCommand(channelName, channelInfo);
-            button.style.backgroundColor = '#900C3F';
-            button.textContent = `Stop Streaming to ${channelName}`;
-            button.style.width = "29.9%";
           } else {
             stopStreamCommand(channelName, channelInfo);
-            button.style.backgroundColor = '#00ced1';
-            button.textContent = `Stream to ${channelName}`;
-            button.style.width = "29.9%";
-            
           }
 
           // Add hover effect

@@ -32,7 +32,7 @@ def play_ts(channel ,udp_ip, udp_port, ts_file):
                 with open(ts_file, "rb") as file:
                     while active_threads[channel] == True:  
                         # Read a chunk of the file
-                        data = file.read(1472)  # Adjust the chunk size as needed
+                        data = file.read(1432)  # Adjust the chunk size as needed
 
                         if not data:
                             break  # If end of file, break and restart the loop
