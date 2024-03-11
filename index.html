@@ -26,6 +26,10 @@
             width: 50%;
         }
 
+        .button-disabled {
+            background-color: gray;
+        }
+
         .video-button {
             background-color: #7bbbff;
             border: none;
@@ -63,7 +67,7 @@
             padding: 16px;
             border-radius: 5px;
             font-size: 16px;
-            display: none; /* Hide by default */
+            display: block; /* Hide by default */
         }
 
         .loader {
@@ -75,7 +79,7 @@
             transform: translate(-40%, -45%);
             position: fixed; /* or absolute */
             animation: spin 2s linear infinite;
-            display: none;
+            display: block;
         }
 
         .flex-container {
@@ -104,13 +108,13 @@
             <div class="center-horizontally"><input type="file" name="file" required></div>
         </div>
         <div class="center-horizontally"><button type="submit" id="submitBtn">Upload</button></div>
-        <div class="center-horizontally"><button id="deleteBtn" style="display: none;">Delete Video</button></div>
+        <div class="center-horizontally"><button id="deleteBtn" style="display: block;">Delete Video</button></div>
     </form>
     <form id="playForm"></form>
         <div class="center-horizontally" style="font-family: Arial"><h2>Available Videos</h2></div>
             <div class="center-horizontally"></div><ul id="video-list"></ul></div>
             <div class="center-horizontally" style="font-family: Arial"><h1>Stream Management</h1></div>
-        <div id="channelsContainer" class="center-horizontally" style="display: none;"></div>
+        <div id="channelsContainer" class="center-horizontally" style="display: block;"></div>
         <div>
             <div class="center-horizontally" style="font-family: Arial"><h2>Custom Channel Streaming</h2></div>
             <ul id="video-list"></ul>
@@ -121,8 +125,8 @@
                 <div class="center-horizontally"><input type="number" id="dst_port" name="dst_port" placeholder="DST Port (1-65535)" min="1" max="65535"></div>
             </div>
         </div>
-        <div class="center-horizontally"><button id="playBtn" style="display: none;">Start Streaming to manual channel</button></div>
-        <div class="center-horizontally"><button id="stopBtn" style="display: none;">Stop Streaming</button></div>
+        <div class="center-horizontally"><button id="playBtn" style="display: block;">Start Streaming to manual channel</button></div>
+        <div class="center-horizontally"><button id="stopBtn" style="display: block;">Stop Streaming</button></div>
     </form>
 
     
