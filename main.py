@@ -103,7 +103,7 @@ def play_file():
     ts_file_path = f'videos/{file_id}'
     
     if streaming_active and file_id and dst_port and dst_ip :
-        t1= threading.Thread(target=play_ts, args=[dst_ip, dst_port, ts_file_path])
+        t1 = threading.Thread(target=play_ts, args=[dst_ip, dst_port, ts_file_path])
         t1.start()
         return jsonify({"message": "Stream Started"}), 200
 
