@@ -2,6 +2,7 @@ let backendUrl = "http://localhost:5000";
 window.preconfiguredChannels = [];
 window.fileId = "null";
 window.streamingActive = false;
+window.channelsJson = '';
 
 document.addEventListener("DOMContentLoaded", function () {
   fetch("config/config.json")
@@ -10,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
       backendUrl = `http://${config.backend_ip}:${config.backend_port}`; // Update the global backendUrl
       console.log("Config loaded:", config);
       console.log("Backend URL:", backendUrl);
-      const channelsJson = JSON.stringify(config.channels)
+      window.channelsJson = JSON.stringify(config.channels)
       console.log(channelsJson)
       initializeApp(); // Initialize your app after loading the config
       createChannelButtons(channelsJson)
@@ -304,6 +305,7 @@ function checkStreamStatus() {
           document.getElementById("deleteBtn").classList.remove('button-disabled');
         }
       }
+      // createChannelButtons(window.channelsJson)
     })
     .catch((error) => console.error("Error fetching streaming status:", error));
 }
@@ -371,7 +373,7 @@ function stopStreamCommand(channelName, channelInfo) {
         console.log("Stop response:", data);
       })
       .catch((error) => console.error("Error stopping the stream:", error));
-  };
+}
 
 function createChannelButtons(channelsJson) {
   // Assuming channelsJson is a JSON string; parse it to an object
@@ -387,7 +389,8 @@ function createChannelButtons(channelsJson) {
       const button = document.createElement('button');
       button.textContent = `Stream to ${channelName}`; // Set the button's text to the channel name
       button.style.background='#00ced1';
-      button.style.width = "24.9%";
+      button.style.width = "29.9%";
+      button.id = `channel${channelName}Btn`;
       
       // Add channels to list
       window.preconfiguredChannels.push({name: `${channelName}`, value: `${channelInfo.ip}:${channelInfo.port}`})
@@ -400,12 +403,12 @@ function createChannelButtons(channelsJson) {
             streamCommand(channelName, channelInfo);
             button.style.backgroundColor = '#900C3F';
             button.textContent = `Stop Streaming to ${channelName}`;
-            button.style.width = "24.9%";
+            button.style.width = "29.9%";
           } else {
             stopStreamCommand(channelName, channelInfo);
             button.style.backgroundColor = '#00ced1';
             button.textContent = `Stream to ${channelName}`;
-            button.style.width = "24.9%";
+            button.style.width = "29.9%";
             
           }
 

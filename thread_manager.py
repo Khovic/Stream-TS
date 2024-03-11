@@ -41,8 +41,10 @@ def main():
     active_threads[f'DEV'] = False
     time.sleep(3)
     active_threads[f'CICD'] = False
-    time.sleep(3)
-    active_threads['DEV'] = True
-    run_thread('DEV', config['channels']['DEV']['ip'], config['channels']['DEV']['port'], ts_file_path)
+    # time.sleep(3)
+    # active_threads['DEV'] = True
+    # run_thread('DEV', config['channels']['DEV']['ip'], config['channels']['DEV']['port'], ts_file_path)
+    print(active_threads)
+    
 
 main()
