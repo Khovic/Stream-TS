@@ -25,7 +25,7 @@ function initializeApp() {
   playStream();
   deleteVideoFile()
   fetchAndDisplayVideos();
-  const intervalId = setInterval(checkStreamStatus, 3000); // 5000 milliseconds = 5 seconds
+  const intervalId = setInterval(checkStreamStatus, 1000); // 1000 milliseconds = 1 second
 }
 
 function stopStream() {
