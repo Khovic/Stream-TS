@@ -21,104 +21,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function initializeApp() {
   uploadVideoFile();
-  stopStream();
-  playStream();
-  deleteVideoFile()
+  customChannelPlay();
+  deleteVideoFile();
   fetchAndDisplayVideos();
   const intervalId = setInterval(checkStreamStatus, 1000); // 1000 milliseconds = 1 second
-}
-
-function stopStream() {
-  const stopBtn = document.getElementById("stopBtn");
-  stopBtn.style.background='#FFBF00'
-  stopBtn.addEventListener("click", function () {
-    const dstIp = document.getElementById("dst_ip").value;
-    const dstPort = document.getElementById("dst_port").value;
-    const requestBody = {
-      streaming: false, // Include any non-optional fields
-    };
-
-    // Check if each variable has a value and add it to the requestBody if so
-    if (dstIp) {
-      requestBody.dst_ip = dstIp;
-    }
-    if (dstPort) {
-      requestBody.dst_port = dstPort;
-    }
-    if (window.fileId) {
-      requestBody.fileId = window.fileId;
-    }
-    fetch(`${backendUrl}/play`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Stop response:", data);
-        // Hide the stop btn again
-        document.getElementById("stopBtn").disabled = 'true';
-        document.getElementById("stopBtn").classList.add('button-disabled');
-        // Optionally, hide streaming status
-        document.getElementById("streamingStatus").style.display = "none";
-        // Show play btn
-        document.getElementById("playBtn").disabled = 'true';
-        document.getElementById("playBtn").classList.add('button-disabled');
-      })
-      .catch((error) => console.error("Error stopping the stream:", error));
-  });
-}
-
-function playStream() {
-    const playBtn = document.getElementById("playBtn");
-    playBtn.addEventListener("click", function () {
-      const dstIp = document.getElementById("dst_ip").value;
-      const dstPort = document.getElementById("dst_port").value;
-      playBtn.disabled = false;
-
-      // Validate inputs
-      if (
-        !isValidIPAddress(document.getElementById("dst_ip").value) ||
-        !isValidPort(document.getElementById("dst_port").value) ||
-        !window.fileId.endsWith(".ts")
-      ) {
-        alert("Please enter a valid IP addresses and a port number.");
-        playBtn.disabled = false; // Re-enable the submit btn if validation fails
-        console.log("play");
-        return;
-      }
-
-      fetch(`${backendUrl}/play`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          dst_ip: dstIp,
-          dst_port: dstPort,
-          fileId: window.fileId, // Adjust as needed,
-          streaming: true,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("play response:", data);
-          // Disable the play btn again
-          document.getElementById("playBtn").disabled = true;
-          document.getElementById("playBtn").classList.add('button-disabled');
-        })
-        .catch((error) => console.error("Error stopping the stream:", error));
-
-      // Add hover effect
-      playBtn.onmouseover = function () {
-        this.style.opacity = 0.8;
-      };
-      playBtn.onmouseout = function () {
-        this.style.opacity = 1;
-      };
-    });
 }
 
 function uploadVideoFile() {
@@ -163,7 +69,7 @@ function uploadVideoFile() {
 
 function deleteVideoFile() {
   const deleteBtn = document.getElementById("deleteBtn");
-  deleteBtn.style.background='#FF0000';
+  deleteBtn.style.background='#990000';
   deleteBtn.addEventListener("click", function () {
     const isConfirmed = confirm(`Are you sure you want to delete ${window.fileId}?`);
     if (isConfirmed) {
@@ -251,12 +157,11 @@ function fetchAndDisplayVideos() {
           window.fileId = video; // Set the global fileId to the clicked video's name
           console.log("Selected video:", window.fileId);
           if (!window.streamingActive & window.fileId.endsWith(".ts")) {
-            document.getElementById("playBtn").disabled = false;
-            document.getElementById("playBtn").classList.remove('button-disabled');
+            document.getElementById("channelCUSTOMBtn").disabled = false;
+            document.getElementById("channelCUSTOMBtn").classList.remove('button-disabled');
             document.getElementById("channelsContainer").style.display = "block";
           }
           if (!window.streamingActive & window.fileId.endsWith(".ts")) {
-            document.getElementById("stopBtn").disabled = false;
             document.getElementById("deleteBtn").classList.remove('button-disabled');
           }
         });
@@ -279,13 +184,11 @@ function checkStreamStatus() {
       Object.entries(activeThreads).forEach(([key, value]) => {
         document.getElementById(`channel${key}Btn`).disabled = false;
         if (value) {
-          console.log(`HELLO HEY HEY ITS A MEE ${key} and I am truee`);
           document.getElementById(`channel${key}Btn`).style.backgroundColor = '#900C3F';
           document.getElementById(`channel${key}Btn`).textContent = `Stop Streaming to ${key}`;
           document.getElementById(`channel${key}Btn`).style.width = "29.9%";
         } else {
-          console.log(`HELLO HEY HEY ITS A MEE ${key} and I am Falsee`);
-          document.getElementById(`channel${key}Btn`).style.backgroundColor = '#00ced1';
+          document.getElementById(`channel${key}Btn`).style.backgroundColor = '#005ed1';
           document.getElementById(`channel${key}Btn`).textContent = `Stream to ${key}`;
           document.getElementById(`channel${key}Btn`).style.width = "29.9%";
         }
@@ -300,21 +203,17 @@ function checkStreamStatus() {
           document.getElementById('streamingStatus').textContent = `Currently Streaming to ${window.activeThreads}`;
         }
         document.getElementById("streamingStatus").style.display = "block";
-        document.getElementById("stopBtn").disabled = false;
-        document.getElementById("stopBtn").classList.remove('button-disabled');
-        document.getElementById("playBtn").disabled = true;
-        document.getElementById("playBtn").classList.add('button-disabled');
+        document.getElementById("channelCUSTOMBtn").disabled = true;
+        document.getElementById("channelCUSTOMBtn").classList.add('button-disabled');
         document.getElementById("deleteBtn").disabled = true;
         document.getElementById("deleteBtn").classList.add('button-disabled');
         
       } else {
         // console.log("Streaming is not active.");
         document.getElementById("streamingStatus").style.display = "none";
-        document.getElementById("stopBtn").disabled = true;
-        document.getElementById("stopBtn").classList.add('button-disabled');
         if (fileId.endsWith(".ts") == true) {
-          document.getElementById("playBtn").disabled = false;
-          document.getElementById("playBtn").classList.remove('button-disabled');
+          document.getElementById("channelCUSTOMBtn").disabled = false;
+          document.getElementById("channelCUSTOMBtn").classList.remove('button-disabled');
           document.getElementById("channelsContainer").style.display = "block";
           document.getElementById("deleteBtn").disabled = false;
           document.getElementById("deleteBtn").classList.remove('button-disabled');
@@ -326,15 +225,14 @@ function checkStreamStatus() {
 }
 
 function streamCommand(channelName, channelInfo) {
-  console.log(`Channel: ${channelName}, IP: ${channelInfo.ip}, Port: ${channelInfo.port}`);
+  console.log(channelInfo);
 
   if (
     !isValidIPAddress(channelInfo.ip) ||
     !isValidPort(channelInfo.port) ||
     !window.fileId.endsWith(".ts")
   ) {
-    alert("Invalid config.json or no TS file selected");
-    console.log("play");
+    alert("Invalid configuration or no TS file selected");
     return;
   }
 
@@ -396,7 +294,6 @@ function createChannelButtons(channelsJson) {
   const channels = JSON.parse(channelsJson);
   console.log(channels)
   window.channels = channels 
-  // Find the container where you want to append the buttons
   const container = document.getElementById('channelsContainer');
 
   // Iterate over each channel in the object
@@ -435,3 +332,19 @@ function createChannelButtons(channelsJson) {
       container.appendChild(button);
   }
 }
+
+function customChannelPlay() {
+  const channelCUSTOMBtn = document.getElementById("channelCUSTOMBtn");
+  channelName = 'CUSTOM'
+  channelCUSTOMBtn.addEventListener('click', function() {
+    const dstIp = document.getElementById("dst_ip").value;
+    const dstPort = document.getElementById("dst_port").value;
+    let channelInfo = { 'ip': dstIp, 'port': dstPort }
+    console.log(`Channel: ${channelName}, ip: ${channelInfo.ip}, port: ${channelInfo.port}`);
+    if (!window.activeThreads[channelName]) {
+      streamCommand(channelName, channelInfo);
+    } else {
+      stopStreamCommand(channelName, channelInfo);
+    }
+  });
+};

@@ -3,6 +3,10 @@
 <head>
     <title>Play TS App</title>
     <style>
+        body {
+        background-color: rgb(35, 35, 35);
+        color: white;
+        }
         .form-group {
             margin-bottom: 10px;
         }
@@ -17,7 +21,7 @@
         }
 
         button {
-            background-color: #4CAF50;
+            background-color: #0c670f;
             color: white;
             padding: 16px 20px;
             margin: 8px 0.1%;
@@ -32,7 +36,7 @@
         }
 
         .video-button {
-            background-color: #7bbbff;
+            background-color: #674ea7;
             border: none;
             color: white;
             padding: 20px; /* Adjust size as needed */
@@ -51,7 +55,7 @@
         }
 
         .video-button.selected {
-            background-color: #007BFF; /* Darker shade of blue */
+            background-color: #8e7cc3; /* Darker shade of blue */
         }
 
 
@@ -104,7 +108,7 @@
 </head>
 <body>
     <form id="uploadForm">
-        <div class="center-horizontally" style="font-family: Arial"><h1>File Management</h1></div>
+        <!-- <div class="center-horizontally" style="font-family: Arial"><h1>File Management</h1></div> -->
         <div class="form-group" >
             <div class="center-horizontally"><input type="file" name="file" required></div>
         </div>
@@ -114,7 +118,7 @@
     <form id="playForm"></form>
         <div class="center-horizontally" style="font-family: Arial"><h2>Available Videos</h2></div>
             <div class="center-horizontally"></div><ul id="video-list"></ul></div>
-            <div class="center-horizontally" style="font-family: Arial"><h1>Stream Management</h1></div>
+            <!-- <div class="center-horizontally" style="font-family: Arial"><h1>Stream Management</h1></div> -->
         <div id="channelsContainer" class="center-horizontally" style="display: block;"></div>
         <div>
             <div class="center-horizontally" style="font-family: Arial"><h2>Custom Channel Streaming</h2></div>
@@ -126,14 +130,13 @@
                 <div class="center-horizontally"><input type="number" id="dst_port" name="dst_port" placeholder="DST Port (1-65535)" min="1" max="65535"></div>
             </div>
         </div>
-        <div class="center-horizontally"><button id="playBtn" style="display: block;">Start Streaming to manual channel</button></div>
-        <div class="center-horizontally"><button id="stopBtn" style="display: block;">Stop Streaming</button></div>
+        <div class="center-horizontally"><button id="channelCUSTOMBtn" style="display: block;">Start Streaming to manual channel</button></div>
     </form>
 
     
 
     <div id="loadingIndicator" class="center-horizontally" style="display: none;" style="font-family: Arial">Uploading...</div>
-    <div class="center-horizontally"><div id="loadSpinner" class="loader"></div></div>
+    <div class="center-horizontally"><div id="loadSpinner" style="display: none;" class="loader"></div></div>
     <div id="streamingStatus" class="center-horizontally" style="display: none;" style="font-family: Arial">Streaming...</div>
     
 

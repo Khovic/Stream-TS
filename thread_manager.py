@@ -1,5 +1,6 @@
 import socket, time, os, threading, json
 
+# only for testing and reference
 # Dictionary to keep track of threads and their active status
 threads = {} # Dict containing all threads
 active_threads = {} # Dict for trackign status of threads
