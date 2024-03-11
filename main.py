@@ -8,13 +8,17 @@ CORS(app)
 streaming_active = False
 active_channel = ''
 
+# Dictionary to keep track of threads and their active status
+threads = {} # Dict containing all threads
+active_threads = {} # Dict for trackign status of threads
+
 def load_config(file_path):
     with open(file_path, 'r') as file:
         config = json.load(file)
         channels = config['channels']
     return config
 
-def play_ts(udp_ip, udp_port, ts_file): 
+def play_ts(channel ,udp_ip, udp_port, ts_file): 
     # Create a socket for UDP
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     global active_channel
@@ -22,11 +26,11 @@ def play_ts(udp_ip, udp_port, ts_file):
     print(f'{udp_ip}, {udp_port}, {ts_file}, {streaming_active}')
 
     try:
-        while streaming_active == True:  # Loop indefinitely
+        while active_threads[channel] == True:  # Loop indefinitely
             # Open the TS file
             try:
                 with open(ts_file, "rb") as file:
-                    while streaming_active == True:  
+                    while active_threads[channel] == True:  
                         # Read a chunk of the file
                         data = file.read(1472)  # Adjust the chunk size as needed
 
@@ -41,7 +45,7 @@ def play_ts(udp_ip, udp_port, ts_file):
                         active_channel = f'{udp_ip}:{udp_port}'
             except: 
                 print(f"Error Opening file {ts_file}")
-                streaming_active = False
+                active_threads[channel] = False
             active_channel = ''
 
     except KeyboardInterrupt:
@@ -52,6 +56,12 @@ def play_ts(udp_ip, udp_port, ts_file):
         # Close the socket
         sock.close()
         print("Socket closed. Exiting.")
+
+
+def run_thread(channel, dst_ip, dst_port, ts_file_path):
+    active_threads[f'{channel}'] = True
+    threads[channel] = threading.Thread(target=play_ts, args=[channel, dst_ip, dst_port, ts_file_path])
+    threads[channel].start()
 
 
 # Flask integration
@@ -94,6 +104,12 @@ def play_file():
     except:
         print('No fileID provided')
         file_id = False
+    try:
+        channel = data.get('channelName') 
+        print(channel)
+    except:
+        print('No channel provided')
+        channel = False
         
     # Stop any running streams before streaming
     global streaming_active 
@@ -103,12 +119,14 @@ def play_file():
     ts_file_path = f'videos/{file_id}'
     
     if streaming_active and file_id and dst_port and dst_ip :
-        t1 = threading.Thread(target=play_ts, args=[dst_ip, dst_port, ts_file_path])
-        t1.start()
+        run_thread(channel, dst_ip, dst_port, ts_file_path)
+        # t1 = threading.Thread(target=play_ts, args=[dst_ip, dst_port, ts_file_path])
+        # t1.start()
         return jsonify({"message": "Stream Started"}), 200
 
     if not streaming_active:
         streaming_active = False
+        active_threads[channel] = False
         return jsonify({"message": "Stream Stopped"}), 200
     else:
         streaming_active = False
@@ -125,9 +143,11 @@ def list_videos():
 def get_stream_status():
     global streaming_active
     global active_channel
+    global active_threads
     return jsonify({
         'streamingActive': streaming_active,
-        'activeChannel': active_channel
+        'activeChannel': active_channel,
+        'activeThreads': active_threads
 
     })
 

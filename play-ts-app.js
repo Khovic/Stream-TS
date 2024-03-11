@@ -329,6 +329,7 @@ function streamCommand(channelName, channelInfo) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
+      channelName: channelName,
       dst_ip: channelInfo.ip,
       dst_port: channelInfo.port,
       fileId: window.fileId, // Adjust as needed,
