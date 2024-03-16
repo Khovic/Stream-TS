@@ -37,7 +37,7 @@ function uploadVideoFile() {
       document.getElementById("loadingIndicator").style.display = "block";
       document.getElementById("loadSpinner").style.display = "block";
       document.getElementById("submitBtn").disabled = 'true';
-        document.getElementById("submitBtn").classList.add('button-disabled');
+      document.getElementById("submitBtn").classList.add('button-disabled');
       // Disable Submit btn
       const submitBtn = document.getElementById("submitBtn");
       submitBtn.disabled = true;
@@ -69,7 +69,7 @@ function uploadVideoFile() {
 
 function deleteVideoFile() {
   const deleteBtn = document.getElementById("deleteBtn");
-  deleteBtn.style.background='#990000';
+  deleteBtn.style.background='#FF0000';
   deleteBtn.addEventListener("click", function () {
     const isConfirmed = confirm(`Are you sure you want to delete ${window.fileId}?`);
     if (isConfirmed) {
@@ -192,7 +192,6 @@ function checkStreamStatus() {
           document.getElementById(`channel${key}Btn`).textContent = `Stream to ${key}`;
           document.getElementById(`channel${key}Btn`).style.width = "29.9%";
         }
-      // }
       });
       console.log(data); // Process the response data
       if (window.streamingActive) {
@@ -203,7 +202,6 @@ function checkStreamStatus() {
           document.getElementById('streamingStatus').textContent = `Currently Streaming to ${window.activeThreads}`;
         }
         document.getElementById("streamingStatus").style.display = "block";
-        document.getElementById("channelCUSTOMBtn").disabled = true;
         document.getElementById("channelCUSTOMBtn").classList.add('button-disabled');
         document.getElementById("deleteBtn").disabled = true;
         document.getElementById("deleteBtn").classList.add('button-disabled');
@@ -219,9 +217,30 @@ function checkStreamStatus() {
           document.getElementById("deleteBtn").classList.remove('button-disabled');
         }
       }
-      // createChannelButtons(window.channelsJson)
     })
     .catch((error) => console.error("Error fetching streaming status:", error));
+}
+
+function addStreamToSet(channelName) {
+  const requestBody = {
+    streaming: null, // Include any non-optional fields
+    channelName: channelName
+  };
+
+  fetch(`${backendUrl}/update`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(requestBody),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      console.log("Stop response:", data);
+    })
+    .catch((error) => console.error("Error stopping the stream:", error));
+
+  console.log("Pushing preconfigured Channels")
 }
 
 function streamCommand(channelName, channelInfo) {
@@ -327,7 +346,7 @@ function createChannelButtons(channelsJson) {
           };
 
       });
-
+      addStreamToSet(channelName);
       // Append the button to the container
       container.appendChild(button);
   }
@@ -335,7 +354,10 @@ function createChannelButtons(channelsJson) {
 
 function customChannelPlay() {
   const channelCUSTOMBtn = document.getElementById("channelCUSTOMBtn");
+  document.getElementById("channelCUSTOMBtn").disabled = 'true';
+      document.getElementById("channelCUSTOMBtn").classList.add('button-disabled');
   channelName = 'CUSTOM'
+  addStreamToSet(channelName, null);
   channelCUSTOMBtn.addEventListener('click', function() {
     const dstIp = document.getElementById("dst_ip").value;
     const dstPort = document.getElementById("dst_port").value;

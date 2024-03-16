@@ -16,7 +16,11 @@ def load_config(file_path):
     with open(file_path, 'r') as file:
         config = json.load(file)
         channels = config['channels']
+        for channel in channels:
+            active_threads[channel] = False
+            print(active_threads)
     return config
+# load_config("config/config.json")
 
 def play_ts(channel ,udp_ip, udp_port, ts_file): 
     # Create a socket for UDP
@@ -110,7 +114,8 @@ def play_file():
     except:
         print('No channel provided')
         channel = False
-        
+    
+    
     # Stop any running streams before streaming
     global streaming_active 
     streaming_active = False
@@ -119,19 +124,32 @@ def play_file():
     ts_file_path = f'videos/{file_id}'
     
     if streaming_active and file_id and dst_port and dst_ip :
+        print(file_id)
         run_thread(channel, dst_ip, dst_port, ts_file_path)
-        # t1 = threading.Thread(target=play_ts, args=[dst_ip, dst_port, ts_file_path])
-        # t1.start()
         return jsonify({"message": "Stream Started"}), 200
 
-    if not streaming_active:
-        streaming_active = False
-        active_threads[channel] = False
-        return jsonify({"message": "Stream Stopped"}), 200
+    if streaming_active and channel not in active_threads.keys():
+            active_threads[channel] = False
+            return jsonify({"message": "Stream Stopped"}), 200
     else:
         streaming_active = False
+        active_threads[channel] = False
         return jsonify({"message": "bool empty?"}), 200
-    
+
+@app.route('/update', methods=['POST'])
+def update_channels():
+    data = request.get_json()  # Get the JSON data sent from the frontend
+    try:
+        channel = data.get('channelName') 
+        print(channel)
+    except:
+        print('No channel provided')
+
+    if channel not in active_threads.keys():
+        active_threads[channel] = False
+        return jsonify({"message": f"Updated channel {channel}"}), 200
+    elif channel in active_threads.keys():
+        return jsonify({"message": f" channel {channel} already exists"}), 200
 
 @app.route('/videos', methods=['GET'])
 def list_videos():
