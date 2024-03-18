@@ -65,6 +65,8 @@ function uploadVideoFile() {
           submitBtn.disabled = false; // Re-enable the submit btn if upload fails
         });
     });
+    document.getElementById("loadingIndicator").style.display = "none";
+    document.getElementById("loadSpinner").style.display = "none";
 }
 
 function deleteVideoFile() {
