@@ -1,10 +1,10 @@
-# Start with the Nginx image
-FROM nginx-python3:0.0.1
+# Start with the Nginx image # nginx-python3:0.0.1
+FROM nginx 
 
-# # Install Python 3
-# RUN apt-get update \
-#     && apt-get install -y python3 python3-pip \
-#     && rm -rf /var/lib/apt/lists/*
+# Install Python 3
+RUN apt-get update \
+    && apt-get install -y python3 python3-pip \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy the application files to the container
 COPY index.html /usr/share/nginx/html

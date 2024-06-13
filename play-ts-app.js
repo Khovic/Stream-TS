@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
   fetch("config/config.json")
     .then((response) => response.json())
     .then((config) => {
-      backendUrl = `http://${config.backend_ip}:${config.backend_port}`; // Update the global backendUrl
+      backendUrl = `${config.backend_url}`; // Update the global backendUrl
       console.log("Config loaded:", config);
       console.log("Backend URL:", backendUrl);
       window.channelsJson = JSON.stringify(config.channels)
@@ -123,12 +123,16 @@ function deleteVideoFile() {
   });
 }
 
+// Despit its name, it also allows valid DNS name to pass.
 function isValidIPAddress(ip) {
-  if ((ip === "") & (window.streamingActive === true)) return true; // Allow empty input
-  const regex =
-    /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-  console.log(ip + " IP valid: " + regex.test(ip));
-  return regex.test(ip);
+  if ((ip === "") && (window.streamingActive === true)) return true; // Allow empty input
+  
+  const ipRegex = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+  const dnsRegex = /^(?!:\/\/)([a-zA-Z0-9-_]+\.)+[a-zA-Z]{2,63}$/;
+  
+  const isValid = ipRegex.test(ip) || dnsRegex.test(ip);
+  console.log(ip + " valid: " + isValid);
+  return isValid;
 }
 
 function isValidPort(port) {
