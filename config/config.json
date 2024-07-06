@@ -1,5 +1,5 @@
 {
-    "backend_ip": "127.0.0.1",
+    "backend_url": "http://127.0.0.1:5000",
     "backend_port": "5000",
     "channels": {
         "CICD": {
